@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap");
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+}
+.minimize-card {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  align-self: flex-end;
+  margin-top: 0.25rem;
+  margin-right: 0.5rem;
+  font-weight: bold;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+.minimize-card:hover {
+  background-color: #46b3bbb2;
+}
+.minimize-card:hover svg {
+  color: #f2f6f7;
+}
+
+.mini-button {
+  position: fixed;
+  width: 300px;
+  padding: 16px;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: #deeaeb;
+  color: #070707;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  border-radius: 5px;
+  /* border: 1px solid #8d8d8d; */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.mini-button:hover {
+  background-color: #46b3bb;
+  color: #f2f6f7;
+}
+
+.transfer-card {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  color: #1f2f5a;
+  font-size: 16px;
+  max-width: 300px;
+  min-height: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: url("chrome-extension://__MSG_@@extension_id__/content/assets/background.png"),
+    radial-gradient(68.59% 68.59% at 50% 50%, #f1eeee 0%, #ccdedf 100%);
+  background-size: cover;
+  border-radius: 5px;
+  /* border: 1px solid #8d8d8d; */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-image {
+  padding-top: 20px;
+  margin-bottom: 10px;
+  width: 120px;
+  height: 110px;
+  object-fit: contain;
+}
+.brand {
+  font-size: 28px;
+  font-weight: bold;
+  align-self: center;
+}
+.brand span {
+  color: #cdc231;
+  font-size: 36px;
+}
+.program {
+  margin-top: auto;
+  margin-bottom: auto;
+  align-items: center;
+}
+.program :nth-child(1) {
+  font-size: 56px;
+  font-weight: bold;
+  line-height: 0.75;
+}
+.program :nth-child(2) {
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+}
+.program :nth-child(3) {
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 900;
+}
+.alt-text {
+  align-self: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.flex {
+  display: flex;
+}
+.action {
+  align-items: center;
+  width: 100%;
+
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  margin-bottom: 1rem;
+}
+.action #button {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  position: relative;
+  cursor: pointer;
+}
+
+.action .button-icon svg {
+  width: 3.75rem;
+  height: 3.75rem;
+  color: white;
+}
+
+.action .button-icon {
+  background-color: green;
+  border-radius: 100%;
+  position: absolute;
+}
+
+.action .button-text {
+  /* margin-left: 1rem; */
+  position: absolute;
+  width: 100%;
+}
+
+.action .button-text span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin-left: 1rem;
+}
+
+.col {
+  flex-direction: column;
+}

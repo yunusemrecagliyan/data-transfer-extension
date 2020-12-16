@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Dynamics-To-QNB",
+  "version": "0.0.1",
+
+  "description": "Dynamics uygulamasından QNB Finansbank uygulamasına fatura detaylarının aktarılmasını sağlayan bir eklenti.",
+  "icons": {},
+  "browser_action": {
+    "default_title": "Bigpara To Youtube",
+    "default_popup": "popup/index.html"
+  },
+  "options_page": "options/mapping.html",
+  "author": [
+    { "name": "Enes Çağlıyan", "email": "enes.cagliyan@gmail.com" },
+    { "name": "Yunus Emre Çağlıyan", "email": "yunusemrecagliyan@gmail.com" }
+  ],
+  "background": {
+    "persistent": false,
+    "scripts": ["lib/js/jquery-3.5.1.min.js", "background.js"]
+  },
+  "permissions": ["storage", "tabs", "<all_urls>", "http://localhost:5501/*"],
+  "web_accessible_resources": [
+    "content/assets/background.png",
+    "content/assets/logo.png"
+  ],
+  "short_name": "Dynamics-To-QNB",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; object-src 'self'"
+}

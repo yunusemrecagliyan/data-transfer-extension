@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../lib/css/bootstrap.min.css">
+    <script src="../lib/js/jquery-3.5.1.min.js"></script>
+    <script src="../lib/js/bootstrap.bundle.min.js"></script>
+    <title>Eşleştirme</title>
+</head>
+
+<body class="container py-4">
+    <header class="">
+        <ul class="nav nav-tabs ">
+            <li class="nav-item">
+                <a id="mapping" class="nav-link" href="repeated-mapping.html">Tekrarlı Eşleştirme</a>
+            </li>
+            <li class="nav-item">
+                <a id="mapping" class="nav-link" href="mapping.html">Eşleştirme</a>
+            </li>
+            <li class="nav-item">
+                <a id="flow" class="nav-link active" href="flow.html">Akış</a>
+            </li>
+        </ul>
+    </header>
+    <main>
+        <div class="offset-10 col-2 mt-4">
+            <button id="save-button" type="submit" class="form-control btn btn-primary d-flex align-items-top">
+                <svg class="bi" width="20" height="20" fill="currentColor">
+                    <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#box-arrow-in-down" />
+                </svg>
+                <span class="ml-2">Kaydet</span>
+            </button>
+        </div>
+        <section class="">
+            <div class="container card mt-4">
+
+                <div class="row">
+                    <div class="col-1">
+                        <!-- <div class="d-flex flex-column py-4 justify-content-between align-items-center h-100">
+                            <button class="btn btn-dark p-2">
+                                <svg class="bi" width="32" height="32" fill="currentColor">
+                                    <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-up" />
+                                </svg>
+                            </button>
+                            <button class="btn btn-dark p-2">
+                                <svg class="bi" width="32" height="32" fill="currentColor">
+                                    <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-down" />
+                                </svg>
+                            </button>
+                        </div> -->
+                    </div>
+                    <div class="col-11 card-body">
+                        <div class="row align-items-center">
+                            <div class="col form-group" id="type-col">
+                                <label for="flow-type">Akış Tipi</label>
+                                <select class="custom-select" id="flow-type">
+                                    <option selected>Tip Seçin</option>
+                                    <option value="click-type">Tıkla</option>
+                                    <option value="data-transfer-type">Veri Aktar</option>
+                                    <option value="repeated-type">Tekrarlı İşlem</option>
+                                    <option value="text-type">Yazı Yaz</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="row">
+                                <div class="col form-group" id="action-on-col">
+                                    <label for="action">Alan Seçici</label>
+                                    <input type="text" class="form-control" id="action-on" disabled>
+                                </div>
+                                <div class="col form-group" id="action-col">
+                                    <label for="action">İşlem</label>
+                                    <input type="text" class="form-control" id="action" disabled>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <button class="btn btn-success d-flex align-items-center justify-content-center
+                                    form-control" id="add-button">
+                                        <svg class="bi ml-n1" width="32" height="32" fill="currentColor">
+                                            <use
+                                                xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#plus" />
+                                        </svg>
+                                        <div>Ekle</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="list-elements">
+            </div>
+        </section>
+    </main>
+    <script src="js/flow.js"></script>
+</body>
+
+</html>
