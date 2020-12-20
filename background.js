@@ -39,10 +39,7 @@ chrome.tabs.onRemoved.addListener((tabid) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  var scripts = [
-    "lib/js/jquery-3.5.1.min.js",
-    "content/sourceContentScript.js",
-  ];
+  var scripts = ["lib/js/jquery-3.5.1.min.js", "content/source/index.js"];
 
   chrome.storage.local.get(["siteData"], ({ siteData }) => {
     if (sourceTabId == 0 || sourceTabId == tabId) {
@@ -58,13 +55,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 function injectScriptsToTargetSite() {
   chrome.storage.local.get(["siteData"], ({ siteData }) => {
-    chrome.tabs.query({ url: `*://${siteData.targetSite}/*` }, (tabs) => {
+    chrome.tabs.query({ url: `${siteData.targetSite}/*` }, (tabs) => {
       var updateProperties = { active: true };
       var scripts = [
         "lib/js/jquery-3.5.1.min.js",
         "lib/js/bililiteRange.js",
         "lib/js/jquery.sendkeys.js",
-        "content/targetContentScript.js",
+        "content/target/index.js",
       ];
       createOrUpdateTab(tabs, updateProperties, scripts, siteData);
     });
@@ -89,14 +86,10 @@ function createOrUpdateTab(tabs, updateProperties, scripts, siteData) {
 }
 
 function tryToInject() {
-  var scripts = [
-    "lib/js/jquery-3.5.1.min.js",
-    "content/sourceContentScript.js",
-  ];
+  var scripts = ["lib/js/jquery-3.5.1.min.js", "content/source/index.js"];
   chrome.storage.local.get(["siteData"], ({ siteData }) => {
     if (siteData) {
       chrome.tabs.query({ url: `${siteData.sourceSite}/*` }, (tabs) => {
-        console.log(tabs);
         sourceTabId = tabs[0]?.id;
         concatenateInjections(tabs[0].id, scripts);
         chrome.tabs.insertCSS({ file: "content/css/sourceSite.css" });

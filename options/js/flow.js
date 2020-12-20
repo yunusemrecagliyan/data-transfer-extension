@@ -4,6 +4,8 @@ const actionCol = $("#action-col");
 const addBtn = $("#add-button");
 const saveBtn = $("#save-button");
 
+const modalAddBtn = $("#addComponentToRepeatedModal #add-button");
+
 const listElements = $("#list-elemets");
 let flows = [];
 
@@ -15,6 +17,7 @@ function initFlows() {
   chrome.storage.local.get(["flowList"], ({ flowList }) => {
     if (flowList) {
       flows = flowList;
+      console.log(flows);
       fillFlows();
     }
   });
@@ -40,63 +43,63 @@ function fillFlows() {
     });
 
     const flowRow = `
-   <div class="container card mt-4">
-      <div class="row">
-          <div class="col-1">
-              <div class="d-flex flex-column py-4 justify-content-between align-items-center h-100 move-buttons">
-                  <button class="btn btn-dark p-2 btn-up" data-index="${index}">
-                    <svg class="bi" width="32" height="32" fill="currentColor">
-                       <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-up" />
-                   </svg>
-                  </button>
-                  <span>${index}</span>
-                  <button class="btn btn-dark p-2 btn-down" data-index="${index}">
+    <div class="container card mt-4">
+        <div class="row">
+            <div class="col-1">
+                <div class="d-flex flex-column py-4 justify-content-between align-items-center h-100 move-buttons">
+                    <button class="btn btn-dark p-2 btn-up" data-index="${index}">
                       <svg class="bi" width="32" height="32" fill="currentColor">
-                          <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-down" />
+                        <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-up" />
+                    </svg>
+                    </button>
+                    <span>${index}</span>
+                    <button class="btn btn-dark p-2 btn-down" data-index="${index}">
+                        <svg class="bi" width="32" height="32" fill="currentColor">
+                            <use xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#arrow-down" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="col-10 card-body">
+                <div class="row align-items-center">
+                    <div class="col form-group type-col">
+                        <label for="flow-type">Akış Tipi</label>
+                        <select class="custom-select flow-type">
+                        <option>Tip Seçin</option>
+                        ${flowTypeSelector}
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="row">
+                        <div class="col form-group action-on-col">
+                            <label for="action">Alan Seçici</label>
+                            <input value="${flow.actionOn}" type="text" class="form-control action-on" disabled>
+                        </div>
+                        <div class="col form-group action-col">
+                            <label for="action">İşlem</label>
+                            <input value="${flow.action}" type="text" class="form-control action" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column justify-content-around align-items-center">
+
+            <button class="btn btn-danger p-2 mx-auto delete" data-index="${index}">
+                      <svg class="bi" width="24" height="24" fill="currentColor">
+                        <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#trash"/>
                       </svg>
-                  </button>
-              </div>
-          </div>
-          <div class="col-10 card-body">
-              <div class="row align-items-center">
-                  <div class="col form-group type-col">
-                      <label for="flow-type">Akış Tipi</label>
-                      <select class="custom-select flow-type">
-                      <option>Tip Seçin</option>
-                      ${flowTypeSelector}
-                      </select>
-                  </div>
-              </div>
-              <div>
-                  <div class="row">
-                      <div class="col form-group action-on-col">
-                          <label for="action">Alan Seçici</label>
-                          <input value="${flow.actionOn}" type="text" class="form-control action-on" disabled>
-                      </div>
-                      <div class="col form-group action-col">
-                          <label for="action">İşlem</label>
-                          <input value="${flow.action}" type="text" class="form-control action" disabled>
-                      </div>
-                  </div>
-              </div>
-          </div>
-
-          <div class="d-flex flex-column justify-content-around align-items-center">
-
-           <button class="btn btn-danger p-2 mx-auto delete" data-index="${index}">
-                    <svg class="bi" width="24" height="24" fill="currentColor">
-                      <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#trash"/>
-                    </svg>
-            </button>
-              <button class="btn btn-secondary p-2 mx-auto edit" data-index="${index}">
-                    <svg class="bi" width="24" height="24" fill="currentColor">
-                      <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil"/>
-                    </svg>
-            </button>
-          </div>
-      </div>
-  </div>
-  `;
+              </button>
+                <button class="btn btn-secondary p-2 mx-auto edit" data-index="${index}">
+                      <svg class="bi" width="24" height="24" fill="currentColor">
+                        <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil"/>
+                      </svg>
+              </button>
+            </div>
+        </div>
+    </div>
+    `;
 
     flowRows.push(flowRow);
   });
@@ -131,6 +134,12 @@ $("#flow-type").on("change", function () {
         `
         <label for="action-on">Alan Seçici</label>
         <input type="text" class="form-control" id="action-on">
+        `
+      );
+      actionCol.html(
+        `
+        <label for="action-on">İşlem</label>
+        <input type="text" class="form-control" id="action" disabled>
         `
       );
       break;
@@ -186,14 +195,93 @@ $("#flow-type").on("change", function () {
           `);
         }
       );
-      actionCol.html(`
-        <label for="action-on">Tıklama Hedefi</label>
-        <input type="text" class="form-control" id="action">
-      `);
+      actionCol
+        .html(
+          `<button type="button" class="btn btn-secondary" style="width:100%; height:100%;" id="action" data-toggle="modal" data-target="#addComponentToRepeatedModal">Yeni İşlem Ekle</button>`
+        )
+        .on("click", () => {});
       break;
     default:
       break;
   }
+});
+const modalActions = [];
+let modalActionOnCol;
+let modalActionCol;
+let modalSelectedType;
+$("#addComponentToRepeatedModal #flow-type").on("change", function () {
+  modalActionOnCol = $("#addComponentToRepeatedModal #action-on-col");
+  modalActionCol = $("#addComponentToRepeatedModal #action-col");
+  modalSelectedType = $(this).val();
+  switch (modalSelectedType) {
+    case "click-type":
+      modalActionOnCol.html(
+        `
+        <label for="action-on">Alan Seçici</label>
+        <input type="text" class="form-control" id="action-on">
+        `
+      );
+      modalActionCol.html(
+        `
+        <label for="action-on">İşlem</label>
+        <input type="text" class="form-control" id="action" disabled>
+        `
+      );
+      break;
+    case "data-transfer-type":
+      chrome.storage.local.get(["mappingList"], ({ mappingList }) => {
+        let mappingsHtml;
+        mappingList.forEach((mapping) => {
+          mappingsHtml += `<option value="${mapping.name}">${mapping.name}</option>\n`;
+        });
+        modalActionOnCol.html(`
+          <label for="action-on">Eşleştirme Türü</label>
+          <select class="custom-select" id="action-on">
+            <option selected>Eşleştirme Seçin</option>
+            ${mappingsHtml}
+          </select>
+          `);
+      });
+      modalActionCol.html(
+        `
+        <label for="action-on">İşlem</label>
+        <input type="text" class="form-control" id="action" disabled>
+        `
+      );
+      break;
+    case "text-type":
+      modalActionOnCol.html(
+        `
+        <label for="action-on">Alan Hedefi</label>
+        <input type="text" class="form-control" id="action-on">
+        `
+      );
+      modalActionCol.html(
+        `
+        <label for="action">İşlem</label>
+        <input type="text" class="form-control" id="action">
+        `
+      );
+      break;
+    default:
+      break;
+  }
+});
+
+modalAddBtn.on("click", function () {
+  const action = {
+    type: modalSelectedType,
+    actionOn: $(modalActionOnCol.children()[1]).val(),
+    action: $(modalActionCol.children()[1]).val(),
+  };
+  $("#repatedActionList").append(`
+  <div class="row">
+  <div class="col">${action.type}</div>
+  <div class="col">${action.actionOn}</div>
+  <div class="col">${action.action}</div>
+  </div>
+  `);
+  modalActions.push(action);
 });
 
 addBtn.on("click", add);
@@ -201,14 +289,19 @@ function add() {
   const flowRow = {
     type: selectedType,
     actionOn: $(actionOnCol.children()[1]).val(),
-    action: $(actionCol.children()[1]).val(),
+    action:
+      selectedType === "repeated-type"
+        ? modalActions
+        : $(actionCol.children()[1]).val(),
   };
   flows.push(flowRow);
   fillFlows();
 }
 saveBtn.on("click", save);
 function save() {
+  console.log(flows);
   chrome.storage.local.set({ flowList: flows });
   chrome.storage.local.set({ flowLength: flows.length });
 }
+
 initFlows();

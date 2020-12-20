@@ -33,7 +33,7 @@ function fillTable() {
     table += `<tr>
                 <td>${element.name}</td>
                 <td>${element.startCss}</td>
-                <td>${element.endCondition}</td>
+                <td><textarea rows="4" class="form-control" readonly>${element.endCondition}</textarea></td>
                 <td id="target-selectors-${index}">
                   <div class="row">
                     <div class="col" style="display:inline-block; float:none; font-weight: 500;">
@@ -51,11 +51,11 @@ function fillTable() {
                       <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#trash"/>
                     </svg>
                   </button>
-                  <!-- <button class="btn edit" dataKey="${index}" data-toggle="modal" data-target="#editModal">
+                  <button class="btn edit" dataKey="${index}" data-toggle="modal" data-target="#editModal">
                     <svg class="bi" width="24" height="24" fill="currentColor">
                       <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil"/>
                     </svg>
-                  </button> -->
+                  </button>
                 </td>
               </tr>`;
   });
@@ -88,36 +88,74 @@ function fillTable() {
     })
     .on("mouseenter", function () {
       $(this).html(`<div>
-                  <svg class="bi" width="24" height="24" fill="currentColor">
-                    <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil-fill"/>
-                  </svg>
-                </div>`);
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                  <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil-fill"/>
+                </svg>
+              </div>`);
     })
     .on("mouseleave", function () {
       $(this).html(`<div>
-                  <svg class="bi" width="24" height="24" fill="currentColor">
-                    <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil"/>
-                  </svg>
-                </div>`);
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                  <use xlink:href="../../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#pencil"/>
+                </svg>
+              </div>`);
     });
 }
-// function openEditModal(index) {
-//   $("#edit-name").val(repeatedMappings[index].name);
-//   $("#edit-source-css").val(repeatedMappings[index].sourceSiteCss);
-//   $("#edit-target-css").val(repeatedMappings[index].targetSiteCss);
-// }
-// function edit() {
-//   repeatedMappings.splice(currentElementId, 1, {
-//     name: $("#edit-name").val(),
-//     sourceSiteCss: $("#edit-source-css").val(),
-//     targetSiteCss: $("#edit-target-css").val(),
-//   });
-//   $("#edit-name").val("");
-//   $("#edit-source-css").val("");
-//   $("#edit-target-css").val("");
+function openEditModal(index) {
+  $("#edit-name").val(repeatedMappings[index].name);
+  $("#edit-row-start-selector").val(repeatedMappings[index].startCss);
+  $("#edit-row-start-condition").val(repeatedMappings[index].startCondition);
+  $("#edit-row-end-condition").val(repeatedMappings[index].endCondition);
+  $("#edit-column-count").val(repeatedMappings[index].targetSelectors.length);
+  let editTargetSelectorRow = "";
+  repeatedMappings[index].targetSelectors.forEach((ts, index) => {
+    console.log(ts);
+    editTargetSelectorRow += `
+      <div class="row mt-2">
+        <div class="col-2">
+          ${index}
+        </div>
+        <input value="${ts.name}" class="col form-control mr-2 edit-target-name" type="text" disabled/>
+        <input value="${ts.selector}" class="col form-control mr-2 edit-target-selector" type="text" disabled/>
+      </div>\n
+      `;
+  });
+  $("#edit-disabled-target-selectors").append(editTargetSelectorRow);
+}
+function edit() {
+  let targetSelector = [];
+  const names = $(".edit-target-name");
+  const selector = $(".edit-target-selector");
 
-//   fillTable();
-// }
+  names.map((i, val) => {
+    console.log(val, i);
+    targetSelector.push({
+      name: $(val).val(),
+      selector: $(selector[i]).val(),
+    });
+  });
+
+  repeatedMappings.splice(currentElementId, 1, {
+    name: $("#edit-name").val(),
+    startCss: $("#edit-row-start-selector").val(),
+    startCondition: $("#edit-row-start-condition").val(),
+    endCondition: $("#edit-row-end-condition").val(),
+    targetSelectors: targetSelector,
+  });
+
+  console.log(repeatedMappings);
+  $("#edit-name").val("");
+  $("#edit-row-start-selector").val("");
+  $("#edit-row-start-condition").val("");
+  $("#edit-row-end-condition").val("");
+  $("#edit-column-count").val("");
+  appendColumnSelectors("#edit-target-selector-fields", 0);
+
+  names.val("");
+  selector.val("");
+
+  fillTable();
+}
 function add() {
   let targetSelector = [];
   const names = $(".target-name");
@@ -163,6 +201,7 @@ function appendColumnSelectors(selector, columnCount) {
       </div>
       <input class="col form-control mr-2 target-name" type="text"/>
       <input class="col form-control mr-2 target-selector" type="text"/>
+
     </div>
     \n
     `;

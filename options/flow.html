@@ -94,6 +94,73 @@
             <div id="list-elements">
             </div>
         </section>
+        <div class="modal fade" id="addComponentToRepeatedModal" tabindex="-1"
+            aria-labelledby="addComponentToRepeatedLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addComponentToRepeatedLabel">Eşleştirme Oluştur</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col" id="repatedActionList">
+                                <div class="row">
+                                    <div class="col">Tip</div>
+                                    <div class="col">Seçici</div>
+                                    <div class="col">İşlem</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col card-body">
+                                <div class="row align-items-center">
+                                    <div class="col form-group" id="type-col">
+                                        <label for="flow-type">Akış Tipi</label>
+                                        <select class="custom-select" id="flow-type">
+                                            <option selected>Tip Seçin</option>
+                                            <option value="click-type">Tıkla</option>
+                                            <option value="data-transfer-type">Veri Aktar</option>
+                                            <option value="text-type">Yazı Yaz</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col form-group" id="action-on-col">
+                                            <label for="action">Alan Seçici</label>
+                                            <input type="text" class="form-control" id="action-on" disabled>
+                                        </div>
+                                        <div class="col form-group" id="action-col">
+                                            <label for="action">İşlem</label>
+                                            <input type="text" class="form-control" id="action" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col">
+                                            <button class="btn btn-success d-flex align-items-center justify-content-center
+                                                            form-control" id="add-button">
+                                                <svg class="bi ml-n1" width="32" height="32" fill="currentColor">
+                                                    <use
+                                                        xlink:href="../lib/svg/bootstrap-icons-1.1.0/bootstrap-icons.svg#plus" />
+                                                </svg>
+                                                <div>Ekle</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                        <button type="button" id="add" class=" btn btn-primary">Ekle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
     <script src="js/flow.js"></script>
 </body>

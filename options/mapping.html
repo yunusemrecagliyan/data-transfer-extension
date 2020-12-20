@@ -50,7 +50,10 @@
                     <tr>
                         <th scope="col" style="width: 5%;">Ad</th>
                         <th scope="col" style="width: 20%;">Kaynak Site Seçicisi</th>
+                        <th scope="col" style="width: 10%;">Başlangıç Koşulu</th>
+                        <th scope="col" style="width: 10%;">Bitiş Koşulu</th>
                         <th scope="col" style="width: 20%;">Hedef Site Seçicisi</th>
+                        <th scope="col" style="width: 5%;">Alan Tipi</th>
                         <th scope="col" style="width: 12%;">İşlemler</th>
                     </tr>
                 </thead>
@@ -75,14 +78,34 @@
                     <form id="css-class">
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">Ad:</label>
-                            <input type="text" id="name" class="form-control" id="recipient-name">
+                            <input type="text" id="name" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="message-text" class="col-form-label">Kaynak Site Seçicisi:</label>
+                            <label for="source-css" class="col-form-label">Kaynak Site Seçicisi:</label>
                             <input class="form-control" id="source-css"></input>
                         </div>
                         <div class="form-group">
-                            <label for="message-text" class="col-form-label">Hedef Site Seçicisi:</label>
+                            <label for="source-end-css" class="col-form-label">Kaynak Site Başlangıç
+                                (Opsiyonel):</label>
+                            <input class="form-control" id="source-start-condition"></input>
+                        </div>
+                        <div class="form-group">
+                            <label for="source-end-css" class="col-form-label">Kaynak Site Bitiş (Opsiyonel):</label>
+                            <input class="form-control" id="source-end-condition"></input>
+                        </div>
+                        <div class="form-group">
+                            <label for="field-type" class="col-form-label">Hedef Site Seçicisi:</label>
+                            <select class="form-control" id="field-type">
+                                <option selected value="normal-field">
+                                    Normal Alan
+                                </option>
+                                <option value="address-field">
+                                    Adres Alan
+                                </option>
+                            </select>
+                        </div>
+                        <div id="target-selectors" class="form-group">
+                            <label for="target-css" class="col-form-label">Hedef Site Seçicisi:</label>
                             <input class="form-control" id="target-css"></input>
                         </div>
                     </form>

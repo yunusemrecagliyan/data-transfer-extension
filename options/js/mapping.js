@@ -8,17 +8,44 @@ function init() {
     fillTable();
   });
 }
-
 function fillTable() {
-  const tableData = [];
-
   var table = "";
 
   mappings.forEach((element, index) => {
+    let slctrs = "";
+
+    $.each(element.targetSelectors, (key, val) => {
+      slctrs += `
+      <div class="row">
+        <div class="col">${key}</div>
+        <div class="col">${val.selector}</div>
+      </div>
+      `;
+    });
+
     table += `<tr>
                 <td>${element.name}</td>
-                <td >${element.sourceSiteCss}</td>
-                <td >${element.targetSiteCss}</td>
+                <td>${element.sourceSiteCss}</td>
+                <td><textarea class="form-control" rows="4" readonly>${
+                  element.sourceStartCondition
+                }</textarea></td>
+                <td>
+                  <textarea class="form-control" rows="4" readonly>${
+                    element.sourceEndCondition
+                  }</textarea>
+                </td>
+                <td>
+                  <div class="row">
+                    <div class="col">İsim</div>
+                    <div class="col">Seçici</div>
+                  </div>
+                  ${slctrs}
+                </td>
+                <td>${
+                  typeof element.targetSelectors === "object"
+                    ? "Adres"
+                    : "Normal"
+                }</td>
                 <td class="align-middle">
                   <button class="btn delete" id="${index}">
                     <svg class="bi" width="24" height="24" fill="currentColor">
@@ -32,7 +59,9 @@ function fillTable() {
                   </button>
                 </td>
               </tr>`;
+    console.log(element);
   });
+
   $(".table-body").html(table);
 
   $(".delete")
@@ -92,16 +121,69 @@ function edit() {
 
   fillTable();
 }
+
+const personalInfo = {
+  name: { selector: "", value: "" },
+  surname: { selector: "", value: "" },
+  turkishId: { selector: "", value: "11111111111" },
+  street: { selector: "", value: "" },
+  apartmentName: { selector: "", value: "" },
+  apartmentNumber: { selector: "", value: "" },
+  doorNumber: { selector: "", value: "" },
+  neighbourhood: { selector: "", value: "" },
+  district: { selector: "", value: "" },
+  city: { selector: "", value: "" },
+  country: { selector: "", value: "TÜRKİYE" },
+  postCode: { selector: "", value: "" },
+};
+
+$("#field-type").on("change", function () {
+  const fieldType = $(this).val();
+  if (fieldType === "normal-field") {
+    $("#target-selectors").html(`
+      <label for="target-css" class="col-form-label">Hedef Site Seçicisi:</label>
+      <input class="form-control" id="target-css"></input>
+    `);
+  } else {
+    // TODO: burayı daha genel birşey olması için adres ve isim ayrı ayrı açılmalı
+    let targetSelectorsInputs = "";
+    $.each(personalInfo, function (key, val, index) {
+      targetSelectorsInputs += `
+      <div class="row mt-2">
+        <label for="${key}" class="col-4">${key}</label>
+        <input id="${key}-selector" value="${val.selector}" class="col form-control mr-2" type="text"/>
+        <input id="${key}-value" value="${val.value}" class="col form-control mr-2" type="text"/>
+      </div>\n
+      `;
+    });
+    $("#target-selectors").html(targetSelectorsInputs);
+  }
+});
+
 function add() {
+  $.each(personalInfo, function (key, val) {
+    personalInfo[key].selector = $(`#${key}-selector`).val();
+    personalInfo[key].value = $(`#${key}-value`).val();
+  });
   mappings.push({
     name: $("#name").val(),
     sourceSiteCss: $("#source-css").val(),
-    targetSiteCss: $("#target-css").val(),
+    sourceStartCondition: $("#source-start-condition").val(),
+    sourceEndCondition: $("#source-end-condition").val(),
+    targetSelectors:
+      $("#field-type").val() === "address-field"
+        ? personalInfo
+        : $("#target-css").val(),
   });
 
   $("#name").val("");
   $("#source-css").val("");
+  $("#source-start-css").val("");
+  $("#source-end-condition").val("");
+  $("#field-type").val("normal-field");
   $("#target-css").val("");
+
+  console.log(mappings);
 
   fillTable();
 }
