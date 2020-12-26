@@ -1,27 +1,58 @@
 let mappings = [];
 let currentElementId;
 
+$("#import-input").on("change", (event) => {
+  const file = event.target.files[0];
+  const fr = new FileReader();
+  const importedMapping = [];
+  fr.onload = function (e) {
+    let lines = e.target.result;
+    importedMapping.push(JSON.parse(lines));
+  };
+  fr.readAsText(file);
+  fr.onloadend = function (e) {
+    mappings = JSON.parse(e.target.result);
+    fillTable();
+  };
+});
+
 function init() {
   chrome.storage.local.get(["mappingList"], ({ mappingList }) => {
     if (!mappingList) return;
     mappings = mappingList;
     fillTable();
+    $("#export-button")
+      .attr(
+        "href",
+        "data:'text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(mappings))
+      )
+      .attr("download", `mapping.json`);
   });
 }
+
 function fillTable() {
   var table = "";
 
   mappings.forEach((element, index) => {
     let slctrs = "";
-
-    $.each(element.targetSelectors, (key, val) => {
-      slctrs += `
+    if (Array.isArray(element.targetSelectors)) {
+      console.log(element.targetSelectors);
+      $.each(element.targetSelectors, (key, val) => {
+        slctrs += `
       <div class="row">
         <div class="col">${key}</div>
         <div class="col">${val.selector}</div>
       </div>
       `;
-    });
+      });
+    } else {
+      console.log(element.targetSelectors);
+
+      slctrs += `<div class="row">
+        <div class="col">${element.targetSelectors}</div>
+      </div>`;
+    }
 
     table += `<tr>
                 <td>${element.name}</td>
@@ -199,6 +230,10 @@ function save() {
 }
 
 init();
+
+function customTimeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 $("#save-button").on("click", () => save());
 $("#add").on("click", () => add());

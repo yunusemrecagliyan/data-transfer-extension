@@ -1,10 +1,10 @@
-function sendMappingsAsKeys(targetSelector, dataToTransfer, message) {
+async function sendMappingsAsKeys(targetSelector, dataToTransfer, message) {
   const target = $(targetSelector);
-  // target.sendkeys("{selectall}");
-  // target.sendkeys("{del}");
-  // target.sendkeys(dataToTransfer);
+  target.val("");
+  //target.sendkeys("{selectall}");
+  //target.sendkeys("{del}");
+  //target.sendkeys(dataToTransfer.trim());
   target.val(dataToTransfer);
-  console.log(targetSelector);
   if (message) {
     chrome.runtime.sendMessage({
       content_name: message,
@@ -12,8 +12,8 @@ function sendMappingsAsKeys(targetSelector, dataToTransfer, message) {
   }
 }
 
-function flowClickType(clickTarget, message) {
-  $(clickTarget).trigger("click");
+async function flowClickType(clickTarget, message) {
+  document.querySelector(clickTarget).click();
   if (message) {
     chrome.runtime.sendMessage({
       content_name: message,
@@ -21,115 +21,158 @@ function flowClickType(clickTarget, message) {
   }
 }
 
-function runRepeatedAction(repeatedData, actionList, actionIndex) {
-  let index = 0;
-  let interval = setInterval(() => {
-    if (index === actionList.length - 1) {
-      clearInterval(interval);
-    }
-    let action = actionList[index];
-    if (action.type === "click-type") {
-      flowClickType(action.actionOn);
-    } else if (action.type === "text-type") {
-      let textCurrent = action.actionOn.replace("?row?", actionIndex);
-      sendMappingsAsKeys(textCurrent, action.action);
-    }
-    index++;
-  }, 500);
-
-  repeatedData.selectors.map((sel, selIndex) => {
-    let interval = [];
-    interval.push(
-      setInterval(() => {
-        let currentSelector = sel.selector.replace("?row?", actionIndex);
-        if (!currentSelector) {
-          return;
-        }
-        let target = $(currentSelector);
-        if (target.length) {
-          // target.sendkeys("{selectall}");
-          // target.sendkeys("{del}");
-          // target.sendkeys(sel.value);
-          target.val(sel.value);
-          console.log("çalıştı");
-          clearInterval(interval);
-        } else {
-          interval.map((i) => clearInterval(i));
-          console.log("bitti");
-        }
-      }, 1000)
-    );
-  });
+function customTimeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function runFlow(flowIndex) {
+async function runRepeatedAction(repeatedData, actionList, actionIndex) {
+  if (Array.isArray(actionList)) {
+    for await (const action of actionList) {
+      if (action.type === "click-type") {
+        const repeatedInterval = [];
+        repeatedInterval.push(
+          setInterval(async () => {
+            if ($(action.actionOn).length) {
+              repeatedInterval.map((interval) => clearInterval(interval));
+              await flowClickType(action.actionOn);
+            }
+          }, 25)
+        );
+      } else if (action.type === "text-type") {
+        let textCurrent = action.actionOn.replace("?row?", actionIndex);
+        const repeatedInterval = [];
+        repeatedInterval.push(
+          setInterval(async () => {
+            if ($(textCurrent).length) {
+              repeatedInterval.map((interval) => clearInterval(interval));
+              await sendMappingsAsKeys(textCurrent, action.action);
+            }
+          }, 25)
+        );
+      }
+
+      for await (const sel of repeatedData.selectors) {
+        await customTimeout(5);
+
+        let currentSelector = await sel.selector
+          .replace("?row?", actionIndex)
+          .replace("\\\\", "")
+          .replace("\\\\", "");
+        console.log(await currentSelector);
+
+        await customTimeout(5);
+        console.log(await currentSelector);
+
+        await (async () => {
+          if (currentSelector !== "") {
+            if ($(currentSelector).length) {
+              console.log($(currentSelector));
+              await sendMappingsAsKeys(currentSelector, sel.value);
+            }
+          }
+        })();
+      }
+    }
+  }
+}
+
+async function runFlow(flowIndex) {
   chrome.storage.local.get(
     ["flowList", "flowIsDone"],
     ({ flowList, flowIsDone }) => {
       if (flowIsDone) {
         return;
       }
-      const flowInterval = setInterval(() => {
-        console.log(flowList);
-        if (flowList[flowIndex].type === "click-type") {
-          if ($(flowList[flowIndex].actionOn).length) {
-            flowClickType(flowList[flowIndex].actionOn, "incrementFlowIndex");
-            clearInterval(flowInterval);
-          }
-        } else if (flowList[flowIndex].type === "data-transfer-type") {
-          chrome.storage.local.get(
-            ["sourceSingleData"],
-            ({ sourceData: sourceSingleData }) => {
-              const dataToTransfer = sourceSingleData.find(
-                (dt) => dt.name === flowList[flowIndex].actionOn
-              );
-              chrome.storage.local.get(["mappingList"], ({ mappingList }) => {
-                const targetSelector = mappingList.find(
-                  (m) => m.name === dataToTransfer.name
-                ).targetSiteCss;
-                if ($(targetSelector).length) {
-                  sendMappingsAsKeys(
-                    targetSelector,
-                    dataToTransfer.data,
-                    "incrementFlowIndex"
-                  );
-                  clearInterval(flowInterval);
-                }
-              });
+      const flowInterval = [];
+      flowInterval.push(
+        setInterval(async () => {
+          if (flowList[flowIndex].type === "click-type") {
+            if ($(flowList[flowIndex].actionOn).length) {
+              flowClickType(flowList[flowIndex].actionOn, "incrementFlowIndex");
+              flowInterval.map((interval) => clearInterval(interval));
             }
-          );
-        } else if (flowList[flowIndex].type === "repeated-type") {
-          chrome.storage.local.get(
-            ["sourceRepeatedData", "repeatedMappingList"],
-            ({ sourceRepeatedData, repeatedMappingList }) => {
-              clearInterval(flowInterval);
-              repeatedMappingList.map((rml) => {
-                sourceRepeatedData.map((repeatedData, index) => {
-                  if (repeatedData.name === rml.name) {
-                    runRepeatedAction(
-                      repeatedData,
-                      flowList[flowIndex].action,
-                      index
+          } else if (flowList[flowIndex].type === "data-transfer-type") {
+            chrome.storage.local.get(
+              ["sourceSingleData"],
+              ({ sourceSingleData }) => {
+                const dataToTransfer = sourceSingleData.filter(
+                  (dt) => dt.name.split(".")[0] === flowList[flowIndex].actionOn
+                );
+                chrome.storage.local.get(
+                  ["mappingList"],
+                  async ({ mappingList }) => {
+                    const mapping = mappingList.find(
+                      (m) => m.name === dataToTransfer[0].name.split(".")[0]
                     );
+                    if (mapping.hasOwnProperty("targetSelectors")) {
+                      for await (const dtt of dataToTransfer) {
+                        const targetSelector =
+                          mapping.targetSelectors[dtt.name.split(".")[1]];
+                        await sendMappingsAsKeys(
+                          targetSelector.selector,
+                          dtt.data
+                        );
+                      }
+                      chrome.runtime.sendMessage({
+                        content_name: "incrementFlowIndex",
+                      });
+                      flowInterval.map((interval) => clearInterval(interval));
+                    } else {
+                      if ($(targetSelector).length) {
+                        sendMappingsAsKeys(
+                          mapping.targetSiteCss,
+                          dataToTransfer.data,
+                          "incrementFlowIndex"
+                        );
+                        flowInterval.map((interval) => clearInterval(interval));
+                      }
+                    }
                   }
-                });
-              });
-            }
-          );
-          chrome.runtime.sendMessage({
-            content_name: "incrementFlowIndex",
-          });
-        } else if (flowList[flowIndex].type === "text-type") {
-          if ($(flowList[flowIndex].actionOn).length) {
-            sendMappingsAsKeys(
-              flowList[flowIndex].actionOn,
-              flowList[flowIndex].action,
-              "incrementFlowIndex"
+                );
+              }
             );
-            clearInterval(flowInterval);
+          } else if (flowList[flowIndex].type === "repeated-type") {
+            chrome.storage.local.get(
+              ["sourceRepeatedData", "repeatedMappingList"],
+              async ({ sourceRepeatedData, repeatedMappingList }) => {
+                flowInterval.map((interval) => clearInterval(interval));
+                const a = setInterval(async () => {
+                  for await (const rml of repeatedMappingList) {
+                    for await (const [
+                      index,
+                      repeatedData,
+                    ] of sourceRepeatedData.entries()) {
+                      if (repeatedData.name === rml.name) {
+                        if ($(flowList[flowIndex].action[0].actionOn).length) {
+                          clearInterval(a);
+                          await customTimeout(1000);
+                          await runRepeatedAction(
+                            repeatedData,
+                            flowList[flowIndex].action,
+                            index
+                          );
+                        }
+                      }
+                    }
+                  }
+                }, 25);
+              }
+            );
+            chrome.runtime.sendMessage({
+              content_name: "incrementFlowIndex",
+            });
+          } else if (flowList[flowIndex].type === "text-type") {
+            if ($(flowList[flowIndex].actionOn).length) {
+              flowInterval.map((interval) => clearInterval(interval));
+              sendMappingsAsKeys(
+                flowList[flowIndex].actionOn,
+                flowList[flowIndex].action,
+                "incrementFlowIndex"
+              );
+            }
           }
-        }
-      }, 100);
+        }, 150)
+      );
     }
   );
 }

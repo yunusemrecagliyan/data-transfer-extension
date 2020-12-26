@@ -146,6 +146,14 @@ function transferData() {
               apartmentAdresses.groups.doorNumber;
           }
           console.log(mapping);
+          for (const data in mapping.targetSelectors) {
+            sourceSingleData.push({
+              name: mapping.name + "." + data,
+              data: mapping.targetSelectors[data].value,
+            });
+          }
+          console.log(sourceSingleData);
+
           // (?<Mahalle>\w.+(?:mah|mahalle|mh))
           // (?<Cadde>\w.+(?:cadde|cad|cd))
           // (?<Sokak>\w.+(?:sokak|sok|sk))

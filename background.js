@@ -76,7 +76,7 @@ function createOrUpdateTab(tabs, updateProperties, scripts, siteData) {
     : chrome.tabs.create(
         {
           // TODO: 'https' i 'http' kabul edecek şekilde düzenle.
-          url: `https://${siteData.targetSite}`,
+          url: `${siteData.targetSite}`,
           active: true,
         },
         (tab) => {
