@@ -1,12 +1,18 @@
 {
   "manifest_version": 2,
-  "name": "Dynamics-To-QNB",
+  "name": "Muhasebe-To-QNB",
   "version": "0.0.1",
-
-  "description": "Dynamics uygulamasından QNB Finansbank uygulamasına fatura detaylarının aktarılmasını sağlayan bir eklenti.",
-  "icons": {},
+  "description": "Muhasebe uygulamasından QNB Finansbank uygulamasına fatura detaylarının aktarılmasını sağlayan bir eklenti.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "24": "icons/icon-24.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "128": "icons/icon-128.png"
+  },
   "browser_action": {
-    "default_title": "Bigpara To Youtube",
+    "default_title": "Muhasebe To QNB",
     "default_popup": "popup/index.html"
   },
   "options_page": "options/mapping.html",
@@ -23,6 +29,6 @@
     "content/assets/background.png",
     "content/assets/logo.png"
   ],
-  "short_name": "Dynamics-To-QNB",
+  "short_name": "Muhasebe-To-QNB",
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; object-src 'self'"
 }
